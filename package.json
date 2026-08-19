@@ -1,0 +1,21 @@
+{
+  "name": "2p-business-league-word-search",
+  "version": "1.0.0",
+  "description": "2Performant Business League Word Search Puzzle",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node server.mjs"
+  },
+  "keywords": [
+    "2performant",
+    "business-league",
+    "word-search",
+    "game"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}

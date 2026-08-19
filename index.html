@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2Performant Business League — Word Search</title>
+  <meta name="description" content="Word Search Puzzle interactiv cu termenii cheie din 2Performant & Business League.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-light">
+  <div class="app-background">
+    <div class="bg-grid-pattern"></div>
+  </div>
+
+  <div class="app-wrapper">
+    <!-- Top Header (Simplified & Sharp) -->
+    <header class="app-header">
+      <div class="brand-container">
+        <div class="logo-badge" title="2Performant Business League">2P</div>
+        <div class="brand-text">
+          <h1 class="brand-title">BUSINESS LEAGUE <span class="badge-tag">WORD SEARCH</span></h1>
+        </div>
+      </div>
+
+      <!-- Icon Actions Group -->
+      <div class="header-actions">
+        <button id="btn-custom" class="icon-btn" title="Creează puzzle personalizat" aria-label="Puzzle personalizat">
+          <span>✏️</span>
+        </button>
+        <button id="btn-sound" class="icon-btn" title="Sunet On/Off" aria-label="Sunet">
+          <span class="sound-icon">🔊</span>
+        </button>
+        <button id="btn-theme" class="icon-btn" title="Schimbă Tema" aria-label="Schimbă tema">
+          <span class="theme-icon">☀️</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Game Container -->
+    <main class="game-layout">
+      <!-- Left Column: Controls & Word List -->
+      <aside class="sidebar-panel">
+        <!-- Compact Category & Difficulty Strip -->
+        <div class="panel-box controls-box">
+          <div class="control-row">
+            <select id="category-select" class="sharp-select" title="Alege pachetul de cuvinte">
+              <option value="ecosystem_2p" selected>💼 2P Ecosystem</option>
+              <option value="business_league">🏆 Business League Tiers</option>
+              <option value="growth_metrics">📈 Growth & Metrics</option>
+              <option value="ai_olympics">🤖 AI & Marketing Tech</option>
+              <option value="all_star">🌟 All-Star Mixed</option>
+              <option value="custom" disabled>✏️ Personalizat</option>
+            </select>
+          </div>
+
+          <div class="control-row difficulty-row">
+            <div class="sharp-segmented" role="group">
+              <button class="seg-btn" data-grid="10" data-diff="easy" title="10x10 (Ușor)">10x10</button>
+              <button class="seg-btn active" data-grid="12" data-diff="medium" title="12x12 (Mediu)">12x12</button>
+              <button class="seg-btn" data-grid="14" data-diff="hard" title="14x14 (Expert)">14x14</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Words List Panel -->
+        <div class="panel-box words-box">
+          <div class="box-header">
+            <span class="box-title">CUVINTE DE GĂSIT</span>
+            <span id="words-progress-badge" class="sharp-badge">0 / 0</span>
+          </div>
+
+          <div id="word-list-container" class="word-list-grid">
+            <!-- Words injected dynamically -->
+          </div>
+        </div>
+
+        <!-- Action Quick-Toolbar -->
+        <div class="panel-box quick-actions-box">
+          <div class="toolbar-grid">
+            <button id="btn-hint" class="sharp-btn hint-btn" title="Primește indiciu">
+              <span class="btn-icon">💡</span>
+              <span class="btn-label">Indiciu (<span id="hint-count">3</span>)</span>
+            </button>
+            <button id="btn-new-game" class="sharp-btn primary-btn" title="Generează careu nou">
+              <span class="btn-icon">🔄</span>
+              <span class="btn-label">Nou</span>
+            </button>
+            <button id="btn-solve-all" class="sharp-btn secondary-btn" title="Arată toate cuvintele">
+              <span class="btn-icon">👁️</span>
+              <span class="btn-label">Rezolvă</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center / Main Column: Game Board -->
+      <section class="board-panel">
+        <!-- Compact HUD Status Bar -->
+        <div class="sharp-hud">
+          <div class="hud-cell" title="Timp Scurs">
+            <span class="hud-icon">⏱️</span>
+            <span id="timer-display" class="hud-mono">00:00</span>
+          </div>
+
+          <div class="hud-cell" title="Punctaj Total">
+            <span class="hud-icon">⭐</span>
+            <span id="score-display" class="hud-mono">0</span>
+          </div>
+
+          <div class="hud-cell hud-progress-cell" title="Progres Curent">
+            <div class="hud-progress-wrap">
+              <div class="hud-progress-labels">
+                <span class="hud-lbl">PROGRES</span>
+                <span id="progress-percent" class="hud-mono">0%</span>
+              </div>
+              <div class="sharp-progress-bar">
+                <div id="progress-bar-fill" class="sharp-progress-fill" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid Container -->
+        <div class="grid-outer-frame">
+          <div class="grid-container" id="grid-container">
+            <!-- SVG Highlighter Layer -->
+            <svg id="svg-highlighter-layer" class="highlighter-svg" xmlns="http://www.w3.org/2000/svg">
+              <g id="svg-found-lines"></g>
+              <g id="svg-active-line"></g>
+            </svg>
+
+            <!-- Letter Grid -->
+            <div id="puzzle-grid" class="puzzle-grid">
+              <!-- Cells populated dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Compact Bottom Selection Bar -->
+        <div class="selection-bar">
+          <span class="sel-lbl">SELECTAT:</span>
+          <span id="selected-word-preview" class="sel-val">—</span>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <span>⚡ 2Performant Business League • AI Olympics Hackathon 2026</span>
+    </footer>
+  </div>
+
+  <!-- Modal: Custom Puzzle -->
+  <div id="custom-modal" class="modal-overlay hidden">
+    <div class="sharp-modal">
+      <div class="modal-header">
+        <h3>✏️ Puzzle Personalizat</h3>
+        <button class="modal-close" id="btn-close-custom">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Introdu cuvintele tale separate prin virgulă sau linii noi:</p>
+        <textarea id="custom-words-input" class="sharp-textarea" rows="4" placeholder="DORIN, TIBERIU, ADELA, GABRIEL, MIHAI, ANA, NICU, ALEX, OANA, RADU, MARIAN, VLAD"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-cancel-custom" class="sharp-btn secondary-btn">Anulează</button>
+        <button id="btn-apply-custom" class="sharp-btn primary-btn">Generează</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Modal: Victory Celebration -->
+  <div id="victory-modal" class="modal-overlay hidden">
+    <div class="sharp-modal victory-modal-box">
+      <div class="victory-header">
+        <div class="trophy-sharp">🏆</div>
+        <h2>FELICITĂRI!</h2>
+        <p class="vic-sub">Ai completat toți termenii din Business League!</p>
+      </div>
+
+      <div class="victory-metrics-grid">
+        <div class="vmetric-box">
+          <span class="vmetric-lbl">TIMP</span>
+          <span id="vstat-time" class="vmetric-num">00:00</span>
+        </div>
+        <div class="vmetric-box">
+          <span class="vmetric-lbl">SCOR</span>
+          <span id="vstat-score" class="vmetric-num">0</span>
+        </div>
+        <div class="vmetric-box">
+          <span class="vmetric-lbl">GĂSITE</span>
+          <span id="vstat-words" class="vmetric-num">0 / 0</span>
+        </div>
+      </div>
+
+      <div class="rank-banner">
+        <span>RANG:</span>
+        <strong id="vstat-rank-title">🦄 UNICORN MASTER</strong>
+      </div>
+
+      <div class="modal-footer victory-footer-btns">
+        <button id="btn-victory-share" class="sharp-btn secondary-btn">📋 Copiază Scor</button>
+        <button id="btn-victory-replay" class="sharp-btn primary-btn">🔄 Joacă Din Nou</button>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+  <script src="app.js"></script>
+</body>
+</html>
